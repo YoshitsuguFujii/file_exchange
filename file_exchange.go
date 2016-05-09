@@ -17,7 +17,8 @@ func main() {
 	server_alive := make(chan bool)
 
 	if len(os.Args) == 1 || os.Args[1] == "--server" {
-		go server.Main(server_alive)
+		go server.Run(server_alive)
+		go server.RunUdpServ()
 	} else {
 		err := client.Main(os.Args)
 		if err != nil {
@@ -32,7 +33,7 @@ LOOP:
 	for {
 		select {
 		case <-server_alive:
-			go server.Main(server_alive)
+			go server.Run(server_alive)
 		case <-hoge:
 			break LOOP
 		default:

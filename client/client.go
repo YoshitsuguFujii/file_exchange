@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"os"
 )
@@ -23,8 +24,7 @@ func switchMethod(commands ...string) error {
 
 	switch cmd {
 	case "list":
-		// 未実装 UDPでipのリストをもらう 名前とip
-		return nil
+		return getList()
 	default:
 		return postFile(cmd, "http://"+targetIp+":8888")
 	}
@@ -74,6 +74,44 @@ func postFile(filename string, targetUrl string) error {
 	}
 	fmt.Println(resp.Status)
 	fmt.Println(string(resp_body))
+	return nil
+}
+
+func getList() error {
+	var rlen int
+
+	ServerAddr, err := net.ResolveUDPAddr("udp", "255.255.255.255:8889")
+	if err != nil {
+		fmt.Println("Error: %v\n", err)
+	}
+
+	conn, err := net.DialUDP("udp", nil, ServerAddr)
+	if err != nil {
+		fmt.Println("Error: %v\n", err)
+	}
+
+	defer conn.Close()
+
+	s := "user"
+
+	rlen, err = conn.Write([]byte(s))
+
+	if err != nil {
+		fmt.Printf("Send Error: %v\n", err)
+		return nil
+	}
+
+	fmt.Printf("Send: %v\n", s)
+
+	buf := make([]byte, 1024)
+
+	rlen, err = conn.Read(buf)
+	if err != nil {
+		fmt.Printf("Receive Error: %v\n", err)
+		return nil
+	}
+
+	fmt.Printf("Receive: %v\n", string(buf[:rlen]))
 	return nil
 }
 

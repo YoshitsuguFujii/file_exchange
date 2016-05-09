@@ -10,6 +10,7 @@ import (
 )
 
 const IntervalSec = 5 * time.Second
+const Port = ":8888"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
@@ -45,13 +46,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func Main(server_alive chan bool) {
-	fmt.Println("### server Start ###")
+func Run(server_alive chan bool) {
+	fmt.Println("### server Start on" + Port + " ###")
 
 	defer func() {
 		server_alive <- false
 	}()
 
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8888", nil)
+	http.ListenAndServe(Port, nil)
 }
