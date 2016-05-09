@@ -27,6 +27,7 @@ func main() {
 		return
 	}
 
+	// 現状無意味なループ
 LOOP:
 	for {
 		select {
