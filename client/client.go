@@ -97,7 +97,11 @@ func getList() error {
 		fmt.Println("Error: %v\n", err)
 	}
 
-	conn.SetDeadline(time.Now().Add(5 * time.Second))
+	conn.SetDeadline(time.Now().Add(3 * time.Second))
+	defer func() {
+		fmt.Println("完了")
+		os.Exit(0)
+	}()
 	defer conn.Close()
 
 	s := lib.CurrentUserName()
@@ -106,20 +110,23 @@ func getList() error {
 
 	if err != nil {
 		fmt.Printf("Send Error: %v\n", err)
-		return nil
+		return err
 	}
 
 	fmt.Printf("Send: %v\n", s)
 
 	buf := make([]byte, 1024)
 
-	rlen, _, err = conn.ReadFrom(buf)
-	if err != nil {
-		fmt.Printf("Receive Error: %v\n", err)
-		return nil
+	for {
+		rlen, _, err = conn.ReadFrom(buf)
+		if err != nil {
+			fmt.Printf("Receive Error: %v\n", err)
+			return err
+		}
+
+		fmt.Printf("Receive: %v\n", string(buf[:rlen]))
 	}
 
-	fmt.Printf("Receive: %v\n", string(buf[:rlen]))
 	return nil
 }
 

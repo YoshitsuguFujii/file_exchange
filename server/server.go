@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -26,14 +27,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, handler, err := r.FormFile("uploadfile")
-	fmt.Println(handler.Filename + "を受信しました")
+	sep_file_name := strings.Split(handler.Filename, "\\")
+	filename := sep_file_name[len(sep_file_name)-1]
+	fmt.Println(filename + "を受信しました")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer file.Close()
 
-	filename := lib.AppendSuffixNumberIfExistsFile(handler.Filename)
+	filename = lib.AppendSuffixNumberIfExistsFile(filename)
 	f, err := os.Create(filename)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
