@@ -35,7 +35,7 @@ func RunUdpServ() {
 
 		fmt.Printf("Receive [%v]: %v\n", remote, s)
 
-		s = "Hello! " + s + " My Name is [" + lib.CurrentUserName() + "]. MyIp is [" + lib.GgetCurrentIpAddress() + "] "
+		s = "Hello! " + s + "!!! My Name is " + lib.CurrentUserName() + ". MyIp is [" + lib.GgetCurrentIpAddress() + "]. "
 
 		rlen, err = conn.WriteToUDP([]byte(s), remote)
 

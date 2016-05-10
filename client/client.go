@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 )
 
 func switchMethod(commands ...string) error {
@@ -86,16 +87,22 @@ func getList() error {
 		fmt.Println("Error: %v\n", err)
 	}
 
-	conn, err := net.DialUDP("udp", nil, ServerAddr)
+	LocalAddr, err := net.ResolveUDPAddr("udp", ":0")
 	if err != nil {
 		fmt.Println("Error: %v\n", err)
 	}
 
+	conn, err := net.ListenUDP("udp", LocalAddr)
+	if err != nil {
+		fmt.Println("Error: %v\n", err)
+	}
+
+	conn.SetDeadline(time.Now().Add(5 * time.Second))
 	defer conn.Close()
 
 	s := lib.CurrentUserName()
 
-	rlen, err = conn.Write([]byte(s))
+	rlen, err = conn.WriteTo([]byte(s), ServerAddr)
 
 	if err != nil {
 		fmt.Printf("Send Error: %v\n", err)
@@ -106,7 +113,7 @@ func getList() error {
 
 	buf := make([]byte, 1024)
 
-	rlen, err = conn.Read(buf)
+	rlen, _, err = conn.ReadFrom(buf)
 	if err != nil {
 		fmt.Printf("Receive Error: %v\n", err)
 		return nil
