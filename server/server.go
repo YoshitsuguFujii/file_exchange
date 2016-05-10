@@ -27,8 +27,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, handler, err := r.FormFile("uploadfile")
+
 	sep_file_name := strings.Split(handler.Filename, "\\")
 	filename := sep_file_name[len(sep_file_name)-1]
+
+	sep_file_name = strings.Split(filename, "/")
+	filename = sep_file_name[len(sep_file_name)-1]
+
 	fmt.Println(filename + "を受信しました")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
