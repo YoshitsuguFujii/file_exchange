@@ -1,6 +1,7 @@
 package client
 
 import (
+	"../lib"
 	"bytes"
 	"fmt"
 	"io"
@@ -92,7 +93,7 @@ func getList() error {
 
 	defer conn.Close()
 
-	s := "user"
+	s := lib.CurrentUserName()
 
 	rlen, err = conn.Write([]byte(s))
 

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"../lib"
 	"fmt"
 	"net"
 )
@@ -32,16 +33,16 @@ func RunUdpServ() {
 
 		s := string(buf[:rlen])
 
-		fmt.Println("Receive [%v]: %v\n", remote, s)
+		fmt.Printf("Receive [%v]: %v\n", remote, s)
 
-		s = "Hello! " + s
+		s = "Hello! " + s + " My Name is [" + lib.CurrentUserName() + "]. MyIp is [" + lib.GgetCurrentIpAddress() + "] "
 
 		rlen, err = conn.WriteToUDP([]byte(s), remote)
 
 		if err != nil {
-			fmt.Println("Receive Error [%v]: %v\n", remote, s)
+			fmt.Printf("Receive Error [%v]: %v\n", remote, s)
 		}
 
-		fmt.Println("Send [%v]: %v\n", remote, s)
+		fmt.Printf("Send [%v]: %v\n", remote, s)
 	}
 }
